@@ -18,9 +18,11 @@ unity-game/[Uu]ser[Ss]ettings/
 
 # Visual Studio / Rider / IDE
 .vs/
+.vscode/
 .idea/
 *.csproj
 *.sln
+*.slnx
 *.suo
 *.user
 *.userprefs
@@ -52,4 +54,3 @@ sysinfo.txt
 # Local environment
 .env
 .env.*
-
