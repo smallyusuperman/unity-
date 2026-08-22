@@ -1,0 +1,66 @@
+# Tactical Roguelite Systems Lab
+
+这是 8 周项目驱动学习系统的真实工程仓库。目标是通过一个小而完整的 Unity 6.x 2D tactical roguelite/action game，展示可迁移的软件工程能力，而不是只展示 Unity 熟悉度。
+
+## Repository Layout
+
+```text
+tactical-roguelite/
+  README.md
+  .gitignore
+  docs/
+  unity-game/
+  cpp-systems-lab/
+  media/
+```
+
+| Path | Purpose |
+|---|---|
+| `unity-game/` | Unity 6.x 2D 主项目。用 Unity Hub 创建项目时选择这个目录 |
+| `cpp-systems-lab/` | FSM、A*、Object Pool、Event System、Spatial Partitioning 小实验 |
+| `docs/` | 架构、性能、测试、AI workflow 和面试说明 |
+| `media/` | 截图、GIF、Demo video、Profiler capture 等作品集证据 |
+
+## Current Status
+
+- Unity project: not created yet
+- C++ systems lab: scaffold only
+- GitHub remote: pending
+- Current baseline target: BLU-01
+- Detected Unity editor: `D:\Unity\Editors\6000.3.22f1`
+- Initial Git commit: pending until Git user name/email are configured
+
+## Unity Project Setup
+
+用 Unity Hub 创建项目时：
+
+1. 选择 Unity 6.x。
+2. 选择 2D 模板。
+3. Project name 使用 `unity-game`。
+4. Location 选择本仓库根目录：`D:\学习计划\engineering\tactical-roguelite`。
+5. 创建后应出现：
+
+```text
+unity-game/
+  Assets/
+  Packages/
+  ProjectSettings/
+```
+
+不要在 `unity-game/` 内再次 `git init`。Git repo 根目录已经是 `tactical-roguelite/`。
+
+## Git Rule
+
+提交 Unity 项目时应跟踪：
+
+- `unity-game/Assets/`
+- `unity-game/Packages/`
+- `unity-game/ProjectSettings/`
+
+不要提交：
+
+- `unity-game/Library/`
+- `unity-game/Temp/`
+- `unity-game/Logs/`
+- build cache
+- IDE user files
