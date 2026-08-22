@@ -23,12 +23,13 @@ tactical-roguelite/
 
 ## Current Status
 
-- Unity project: not created yet
+- Unity project: Unity 6000.3.22f1 project present under `unity-game/`
+- Player movement: BLU-01 engineering complete in `TestArena`; runtime checklist and screenshot recorded
 - C++ systems lab: scaffold only
-- GitHub remote: pending
-- Current baseline target: BLU-01
+- GitHub remote: `origin` configured and `main` synchronized through `1e4545c`
+- Current baseline target: BLU-02；BLU-01 remains completed history
 - Detected Unity editor: `D:\Unity\Editors\6000.3.22f1`
-- Initial Git commit: pending until Git user name/email are configured
+- Latest feature commit: `1e4545c feat: add basic player movement`
 
 ## Unity Project Setup
 
