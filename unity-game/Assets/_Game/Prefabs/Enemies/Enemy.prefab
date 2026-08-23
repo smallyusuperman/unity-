@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7110779536916101604}
   - component: {fileID: 5694154939482548492}
   - component: {fileID: 3222248700842246322}
+  - component: {fileID: -3033131704882243239}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -68,6 +69,7 @@ SpriteRenderer:
     subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_ReceiveGI: 1
   m_PreserveUVs: 0
@@ -194,3 +196,16 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ContactDamage
   damage: 5
+--- !u!114 &-3033131704882243239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977791363371296103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4837d875b4fbbe242a4d78d3eb297b8c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 100
