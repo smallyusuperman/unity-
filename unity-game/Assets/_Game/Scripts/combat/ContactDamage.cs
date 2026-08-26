@@ -15,7 +15,6 @@ public class ContactDamage : MonoBehaviour
         if (playerHealth != null)
         {
             playerHealth.TakeDamage(damage);
-            Debug.Log("造成伤害");
         }
     }
 }

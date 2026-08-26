@@ -9,6 +9,8 @@ public class EnemyHealth : MonoBehaviour
 
     public float CurrentHealth => currentHealth;
 
+    public float MaxHealth => maxHealth;
+
     private void Awake()
     {
         maxHealth = Mathf.Max(0f, maxHealth);
