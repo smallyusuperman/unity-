@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    // 当前场景实例通过 Inspector 指定 Player；敌人会读取该 Transform 的最新位置。
+    // 场景实例可由 Inspector 配置目标；动态实例由 WaveSpawner 调用 Initialize 注入目标。
     [SerializeField] private Transform target;
 
     [SerializeField] private float moveSpeed = 5f;
@@ -14,9 +14,24 @@ public class EnemyController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         if (target == null)
         {
-            Debug.LogError("EnemyController requires a target Transform.", this);
             enabled = false;
         }
+    }
+
+    public void Initialize(Transform newTarget)
+    {
+        if (newTarget == null)
+        {
+            Debug.LogError(
+                "EnemyController cannot initialize without a target Transform.",
+                this);
+
+            enabled = false;
+            return;
+        }
+
+        target = newTarget;
+        enabled = true;
     }
 
     private void FixedUpdate()
