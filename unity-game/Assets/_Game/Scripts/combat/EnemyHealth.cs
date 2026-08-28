@@ -5,6 +5,7 @@ public class EnemyHealth : MonoBehaviour
     [Min(0f)]
     [SerializeField] private float maxHealth = 100f;
 
+    [SerializeField] private EnemyStatsConfig enemyData;
     private float currentHealth;
 
     public float CurrentHealth => currentHealth;
@@ -13,6 +14,11 @@ public class EnemyHealth : MonoBehaviour
 
     private void Awake()
     {
+        // 未绑定配置时沿用组件原有数值，保留旧 Prefab 的运行方式。
+        if (enemyData != null)
+        {
+            maxHealth = enemyData.maxHealth;
+        }
         maxHealth = Mathf.Max(0f, maxHealth);
         currentHealth = maxHealth;
     }

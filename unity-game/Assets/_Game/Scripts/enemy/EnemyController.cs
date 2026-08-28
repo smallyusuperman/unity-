@@ -5,7 +5,9 @@ public class EnemyController : MonoBehaviour
     // 场景实例可由 Inspector 配置目标；动态实例由 WaveSpawner 调用 Initialize 注入目标。
     [SerializeField] private Transform target;
 
-    [SerializeField] private float moveSpeed = 5f;
+    [Min(0f)][SerializeField] private float moveSpeed = 2f;
+
+    [SerializeField] private EnemyStatsConfig enemyData;
 
     private Rigidbody2D rb;
 
@@ -16,6 +18,11 @@ public class EnemyController : MonoBehaviour
         {
             enabled = false;
         }
+        if(enemyData != null)
+        {
+           moveSpeed = enemyData.moveSpeed;
+        }
+        
     }
 
     public void Initialize(Transform newTarget)
