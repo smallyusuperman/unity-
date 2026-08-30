@@ -3,17 +3,14 @@ using UnityEngine;
 
 public class WaveSpawner : MonoBehaviour
 {
+    [Header("Enemy Configuration")]
+    [SerializeField] private WaveConfig[] waveConfigs;
+
     [Header("Scene References")]
-    [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject playerTarget;
     [SerializeField] private Transform[] spawnPoints;
 
     [Header("Wave Configuration")]
-    [SerializeField] private int[] enemiesPerWave = { 2, 3, 4 };
-
-    [Min(0f)]
-    [SerializeField] private float spawnInterval = 0.75f;
-
     [Min(0f)]
     [SerializeField] private float interWaveDelay = 2f;
 
@@ -26,6 +23,7 @@ public class WaveSpawner : MonoBehaviour
     private int currentSpawnPointIndex;
 
     private float spawnTimer;
+    private float currentSpawnInterval;
     private float interWaveTimer;
 
     private bool waitingForNextWave;
@@ -44,8 +42,6 @@ public class WaveSpawner : MonoBehaviour
             enabled = false;
             return;
         }
-
-        spawnInterval = Mathf.Max(0f, spawnInterval);
         interWaveDelay = Mathf.Max(0f, interWaveDelay);
     }
 
@@ -85,22 +81,45 @@ public class WaveSpawner : MonoBehaviour
 
     private bool ValidateConfiguration()
     {
-        if (enemyPrefab == null)
+        if (waveConfigs == null || waveConfigs.Length == 0)
         {
+            Debug.LogError(
+            "WaveSpawner requires at least one wave config.",
+            this);
+
+            return false;
+        }
+        for (int i = 0; i < waveConfigs.Length; i++)
+        {
+            if (waveConfigs[i] == null)
+            {
+                Debug.LogError(
+                    $"WaveSpawner wave config at index {i} is missing.",
+                    this);
+
+                return false;
+            }
+        }
+
+        for (int i = 0; i < waveConfigs.Length; i++)
+        {
+            if (waveConfigs[i].enemyPrefab == null){
             Debug.LogError(
                 "WaveSpawner requires an enemy prefab.",
                 this);
 
             return false;
+            }
         }
-
-        if (enemyPrefab.GetComponent<EnemyController>() == null)
+        for (int i = 0; i < waveConfigs.Length; i++){
+        if (waveConfigs[i].enemyPrefab.GetComponent<EnemyController>() == null)
         {
             Debug.LogError(
                 "WaveSpawner enemy prefab requires an EnemyController component.",
                 this);
 
             return false;
+        }
         }
 
         if (playerTarget == null)
@@ -144,18 +163,9 @@ public class WaveSpawner : MonoBehaviour
             }
         }
 
-        if (enemiesPerWave == null || enemiesPerWave.Length == 0)
+        for (int i = 0; i < waveConfigs.Length; i++)
         {
-            Debug.LogError(
-                "WaveSpawner requires at least one configured wave.",
-                this);
-
-            return false;
-        }
-
-        for (int i = 0; i < enemiesPerWave.Length; i++)
-        {
-            if (enemiesPerWave[i] <= 0)
+            if (waveConfigs[i].enemyCount <= 0)
             {
                 Debug.LogError(
                     $"WaveSpawner wave {i + 1} must contain at least one enemy.",
@@ -164,12 +174,13 @@ public class WaveSpawner : MonoBehaviour
                 return false;
             }
         }
-
-        if (spawnInterval < 0f)
+        for (int i = 0; i < waveConfigs.Length; i++){
+        if (waveConfigs[i].spawnInterval < 0f)
         {
             Debug.LogWarning(
                 "WaveSpawner spawn interval was negative and will be clamped to zero.",
                 this);
+        }
         }
 
         if (interWaveDelay < 0f)
@@ -184,7 +195,9 @@ public class WaveSpawner : MonoBehaviour
 
     private void BeginCurrentWave()
     {
-        int enemyCount = enemiesPerWave[currentWaveIndex];
+        WaveConfig currentWaveConfig = waveConfigs[currentWaveIndex];
+        int enemyCount = currentWaveConfig.enemyCount;
+        currentSpawnInterval = Mathf.Max(0f, currentWaveConfig.spawnInterval);
 
         for (int i = 0; i < enemyCount; i++)
         {
@@ -205,7 +218,7 @@ public class WaveSpawner : MonoBehaviour
     {
         spawnTimer += Time.deltaTime;
 
-        if (spawnTimer < spawnInterval)
+        if (spawnTimer < currentSpawnInterval)
         {
             return;
         }
@@ -224,7 +237,7 @@ public class WaveSpawner : MonoBehaviour
         Transform spawnPoint = pendingSpawnPoints.Dequeue();
 
         GameObject enemy = Instantiate(
-            enemyPrefab,
+            waveConfigs[currentWaveIndex].enemyPrefab,
             spawnPoint.position,
             Quaternion.identity);
 
@@ -248,7 +261,7 @@ public class WaveSpawner : MonoBehaviour
 
     private void UpdateWaveProgression()
     {
-        if (currentWaveIndex >= enemiesPerWave.Length - 1)
+        if (currentWaveIndex >= waveConfigs.Length - 1)
         {
             CompleteRun();
             return;

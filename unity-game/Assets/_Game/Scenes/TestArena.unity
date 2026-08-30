@@ -163,15 +163,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fe3c1fbdf57fe748bd0dc8558679208, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
-  enemyPrefab: {fileID: 8977791363371296103, guid: c6c7305652124714c9c9fa06b571079f, type: 3}
+  waveConfigs:
+  - {fileID: 11400000, guid: d27989b0ea510be418c8de4bb3f0e1c6, type: 2}
+  - {fileID: 11400000, guid: 1ad24154f53585040a8c58023c77cafd, type: 2}
+  - {fileID: 11400000, guid: fff34378114a7e34a8d2c0dc83e21a11, type: 2}
   playerTarget: {fileID: 1811532719}
   spawnPoints:
   - {fileID: 814336111}
   - {fileID: 1697285890}
   - {fileID: 1496802112}
   - {fileID: 230159611}
-  enemiesPerWave: 020000000300000004000000
-  spawnInterval: 0.75
   interWaveDelay: 2
 --- !u!1 &230159610
 GameObject:

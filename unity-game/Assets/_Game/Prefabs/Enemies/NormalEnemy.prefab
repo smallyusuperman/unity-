@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3222248700842246322}
   - component: {fileID: -3033131704882243239}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: NormalEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -183,7 +183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
   target: {fileID: 0}
   moveSpeed: 4
-  enemyData: {fileID: 0}
+  enemyData: {fileID: 11400000, guid: f7c1fa6dcc8d0ca4b986a6846ed2255a, type: 2}
 --- !u!114 &3222248700842246322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,4 +210,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 60
-  enemyData: {fileID: 0}
+  enemyData: {fileID: 11400000, guid: f7c1fa6dcc8d0ca4b986a6846ed2255a, type: 2}
