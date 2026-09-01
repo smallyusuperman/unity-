@@ -1,7 +1,10 @@
 using UnityEngine;
+using System;
 
 public class PlayerHealth : MonoBehaviour
 {
+    public event EventHandler HealthChanged;
+
     // maxHealth 是可配置上限；currentHealth 是每次运行时独立变化的状态。
     [Min(0f)][SerializeField] private float maxHealth = 100f;
 
@@ -19,6 +22,8 @@ public class PlayerHealth : MonoBehaviour
             currentHealth = 1f;
             TakeDamage(2f); // 确保在初始生命值为零时触发死亡逻辑
         }
+
+        HealthChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void TakeDamage(float damage)
@@ -33,6 +38,12 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
         Debug.Log($"Player Health: {currentHealth}/{maxHealth}");
+
+        if (damage > 0f)
+        {
+            // 触发生命值变化事件
+            HealthChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         if (currentHealth <= 0f)
         {

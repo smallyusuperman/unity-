@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System;
 
 public class PlayerHealthDisplay : MonoBehaviour
 {
@@ -22,13 +23,32 @@ public class PlayerHealthDisplay : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void Start()
+    {
+        // 初始化显示
+        OnHealthChanged(playerHealth, EventArgs.Empty);
+    }
+
+    private void OnHealthChanged(object sender, EventArgs e)
     {
         healthText.text = $"Health: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}";
 
         if (playerHealth.CurrentHealth <= 0f)
         {
             healthText.text = "!you are dead! Press R to Restart";
+        }
+    }
+
+    private void OnEnable()
+    {
+        playerHealth.HealthChanged += OnHealthChanged;
+    }
+
+    private void OnDisable()
+    {
+        if (playerHealth != null)
+        {
+            playerHealth.HealthChanged -= OnHealthChanged;
         }
     }
 }
