@@ -6,6 +6,6 @@ using UnityEngine;
 )]
 public class EnemyStatsConfig : ScriptableObject
 {
-    public float moveSpeed;
+    [Min(0f)] public float moveSpeed;
     public float maxHealth;
 }

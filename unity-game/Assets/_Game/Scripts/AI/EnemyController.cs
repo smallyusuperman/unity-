@@ -20,7 +20,7 @@ public class EnemyController : MonoBehaviour
         }
         if(enemyData != null)
         {
-           moveSpeed = enemyData.moveSpeed;
+           moveSpeed = Mathf.Max(0f, enemyData.moveSpeed);
         }
         
     }
