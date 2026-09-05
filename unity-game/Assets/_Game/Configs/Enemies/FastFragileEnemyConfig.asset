@@ -12,5 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 165c20e9fa3ba35439d12403065b8af9, type: 3}
   m_Name: FastFragileEnemyConfig
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatsConfig
-  moveSpeed: 4
+  ChaseMovespeed: 5
+  IdleMovespeed: 3
+  IdleTime: 1
+  AttackDamage: 12
+  AttackCooldown: 0.8
+  AttackRange: 2
+  IdleToChaseDistance: 4
+  ChaseToIdleDistance: 5
   maxHealth: 90

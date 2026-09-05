@@ -12,5 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 165c20e9fa3ba35439d12403065b8af9, type: 3}
   m_Name: NormalEnemyConfig
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatsConfig
-  moveSpeed: 2
+  ChaseMovespeed: 4
+  IdleMovespeed: 2
+  IdleTime: 1
+  AttackDamage: 18
+  AttackCooldown: 1
+  AttackRange: 3
+  IdleToChaseDistance: 5
+  ChaseToIdleDistance: 6
   maxHealth: 150

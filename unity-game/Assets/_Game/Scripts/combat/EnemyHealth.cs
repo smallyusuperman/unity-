@@ -12,8 +12,11 @@ public class EnemyHealth : MonoBehaviour
 
     public float MaxHealth => maxHealth;
 
+    private EnemyController enemyController;
+
     private void Awake()
     {
+        enemyController = GetComponent<EnemyController>();
         // 未绑定配置时沿用组件原有数值，保留旧 Prefab 的运行方式。
         if (enemyData != null)
         {
@@ -30,6 +33,7 @@ public class EnemyHealth : MonoBehaviour
         Debug.Log($"Enemy Health: {currentHealth}/{maxHealth}");
         if (currentHealth == 0f)
         {
+            enemyController.ChangeState(EnemyState.Dead);
             Destroy(gameObject);
             Debug.Log("Enemy destroyed");
         }

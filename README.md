@@ -68,11 +68,11 @@ unity-game/
 
 
 脚本职责：CameraFollow：确保主视角中心永远是玩家本身
-ContactDamage：每次敌人物体接触玩家本身时造成伤害。要求是一直接触制造成一次伤害，造成伤害量可调
+EnemyAttack：在敌人进入 Attack 状态时，按配置的攻击范围、伤害和冷却主动攻击玩家
 EnemyHealth：管理敌人血量，提供外部修改血量入口，血量总数可调，死亡后销毁对象
 Playerattack：负责读取键盘输入，判断是否存在敌人和敌人血量改变入口的调用
 Playerhealth：管理玩家血量，血量为0后禁止玩家操作
-Enemycontroller：控制敌人超玩家方向移动，速度可调
+Enemycontroller：管理敌人的 Idle、Chase、Attack、Dead 状态及对应移动，相关参数可调
 PlayerController：玩家可以控制主对象移动，速度可调
 PlayerRestartController：玩家血量为0后按R重启游戏
 WaveSpawner：比较复杂，我已经自己写过完整需求了。大体上就是控制波次生成
