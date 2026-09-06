@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
+
+    [SerializeField] bool debugMode = true;
     // 场景实例可由 Inspector 配置目标；动态实例由 WaveSpawner 调用 Initialize 注入目标。
     [SerializeField] private Transform target;
 
@@ -11,6 +13,8 @@ public class EnemyController : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    private EnemyState previousState;
+    public EnemyState PreviousState => previousState;
     private EnemyState currentState;
     public EnemyState CurrentState => currentState;
 
@@ -50,7 +54,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("EnemyController: Missing EnemyStatsConfig. Please assign it in the Inspector.", this);
+            Debug.LogError($"{name}{GetInstanceID()} | {Time.frameCount} | Missing EnemyStatsConfig. Please assign it in the Inspector.", this);
             enabled = false;
         }
     }
@@ -61,9 +65,13 @@ public class EnemyController : MonoBehaviour
         {
             direction = Random.insideUnitCircle.normalized;
             currentState = EnemyState.Idle;
+            if (debugMode)
+                Debug.Log($"{name}{GetInstanceID()} | {Time.frameCount} | Starting in Idle state.", this);
         }
         else
         {
+            if (debugMode)
+                Debug.Log($"{name}{GetInstanceID()} | {Time.frameCount} | Starting in Chase state.", this);
             currentState = EnemyState.Chase;
         }
     }
@@ -140,12 +148,21 @@ public class EnemyController : MonoBehaviour
 
     public void ChangeState(EnemyState newState)
     {
-        if(currentState == EnemyState.Dead)
+        if (currentState == newState)
         {
-            Debug.LogWarning("EnemyController: Attempted to change state from Dead. No state change will occur.", this);
             return;
         }
+
+        if(currentState == EnemyState.Dead)
+        {
+            Debug.LogWarning($"{name}{GetInstanceID()} | {Time.frameCount} | Attempted to change state from Dead. No state change will occur.", this);
+            return;
+        }
+
+        previousState = currentState;
         currentState = newState;
+        if (debugMode){
+            Debug.Log($"{name}{GetInstanceID()} | {Time.frameCount} | {previousState} -> {currentState}.", this);}
     }
 
     public void ResetCooldown()
@@ -157,55 +174,55 @@ public class EnemyController : MonoBehaviour
     {
         if (enemyData == null)
         {
-            Debug.LogError("EnemyController: Missing EnemyStatsConfig. Please assign it in the Inspector.", this);
+            Debug.LogError($"{name}{GetInstanceID()} | {Time.frameCount} | Missing EnemyStatsConfig. Please assign it in the Inspector.", this);
             return false;
         }
 
         if (GetComponent<Rigidbody2D>() == null)
         {
-            Debug.LogError("EnemyController: Missing Rigidbody2D component. Please ensure it is attached to the GameObject.", this);
+            Debug.LogError($"{name}{GetInstanceID()} | {Time.frameCount} | Missing Rigidbody2D component. Please ensure it is attached to the GameObject.", this);
             return false;
         }
 
         if (enemyData.ChaseToIdleDistance <= 0f || enemyData.IdleToChaseDistance <= 0f || enemyData.AttackRange <= 0f)
         {
-            Debug.LogError("EnemyController: Invalid distance or range values in EnemyStatsConfig. Please ensure they are positive.", this);
+            Debug.LogError($"{name}{GetInstanceID()} | {Time.frameCount} | Invalid distance or range values in EnemyStatsConfig. Please ensure they are positive.", this);
             return false;
         }
 
         if (enemyData.AttackRange >= enemyData.ChaseToIdleDistance)
         {
-            Debug.LogError("EnemyController: Invalid speed or range configuration in EnemyStatsConfig. Please ensure IdleMovespeed < ChaseMovespeed and AttackRange < ChaseToIdleDistance.", this);
+            Debug.LogError($"{name}{GetInstanceID()} | {Time.frameCount} | Invalid speed or range configuration in EnemyStatsConfig. Please ensure IdleMovespeed < ChaseMovespeed and AttackRange < ChaseToIdleDistance.", this);
             return false;
         }
 
         if (enemyData.AttackRange >= enemyData.IdleToChaseDistance)
         {
-            Debug.LogError("EnemyController: Invalid speed or range configuration in EnemyStatsConfig. Please ensure IdleMovespeed < ChaseMovespeed and AttackRange < ChaseToIdleDistance.", this);
+            Debug.LogError($"{name}{GetInstanceID()} | {Time.frameCount} | Invalid speed or range configuration in EnemyStatsConfig. Please ensure IdleMovespeed < ChaseMovespeed and AttackRange < ChaseToIdleDistance.", this);
             return false;
         }
 
         if (enemyData.ChaseToIdleDistance <= enemyData.IdleToChaseDistance)
         {
-            Debug.LogError("EnemyController: Invalid speed or range configuration in EnemyStatsConfig. Please ensure IdleMovespeed < ChaseMovespeed and AttackRange < ChaseToIdleDistance.", this);
+            Debug.LogError($"{name}{GetInstanceID()} | {Time.frameCount} | Invalid speed or range configuration in EnemyStatsConfig. Please ensure IdleMovespeed < ChaseMovespeed and AttackRange < ChaseToIdleDistance.", this);
             return false;
         }
 
         if (enemyData.IdleMovespeed >= enemyData.ChaseMovespeed)
         {
-            Debug.LogError("EnemyController: Invalid speed or range configuration in EnemyStatsConfig. Please ensure IdleMovespeed < ChaseMovespeed and AttackRange < ChaseToIdleDistance.", this);
+            Debug.LogError($"{name}{GetInstanceID()} | {Time.frameCount} | Invalid speed or range configuration in EnemyStatsConfig. Please ensure IdleMovespeed < ChaseMovespeed and AttackRange < ChaseToIdleDistance.", this);
             return false;
         }
 
         if (enemyData.IdleMovespeed <= 0f || enemyData.ChaseMovespeed <= 0f)
         {
-            Debug.LogError("EnemyController: Invalid speed values in EnemyStatsConfig. Please ensure IdleMovespeed and ChaseMovespeed are positive.", this);
+            Debug.LogError($"{name}{GetInstanceID()} | {Time.frameCount} | Invalid speed values in EnemyStatsConfig. Please ensure IdleMovespeed and ChaseMovespeed are positive.", this);
             return false;
         }
 
         if (enemyData.IdleTime < 0f || enemyData.AttackCooldown < 0f)
         {
-            Debug.LogError("EnemyController: Invalid time values in EnemyStatsConfig. Please ensure IdleTime and AttackCooldown are non-negative.", this);
+            Debug.LogError($"{name}{GetInstanceID()} | {Time.frameCount} | Invalid time values in EnemyStatsConfig. Please ensure IdleTime and AttackCooldown are non-negative.", this);
             return false;
         }
 

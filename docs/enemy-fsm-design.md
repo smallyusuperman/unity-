@@ -10,7 +10,7 @@ Idle 采用无边界随机游走，每隔配置的 `IdleTime` 更换方向；这
 
 ## 状态与转移
 
-以下是本人手绘图与讨论补充的文字整理，不另制作重复转移表。`d` 表示敌人与玩家距离，`enterRange < leaveRange`；具体数值尚未决定。
+以下是本人手绘图与讨论补充的文字整理，不另制作重复转移表。`d` 表示敌人与玩家距离，`enterRange < leaveRange`；已保存的配置数值见下方“当前参数”。
 
 - **Idle**：无边界慢速随机游走，按 `IdleTime` 更换方向；不负责主动攻击。
 - **Chase**：朝玩家快速移动，复用现有追踪计算；满足攻击条件后才进入 Attack。
@@ -33,7 +33,7 @@ Idle 采用无边界随机游走，每隔配置的 `IdleTime` 更换方向；这
 
 - **缺少初始目标就快速失败**：Spawner 启动时检查所用 Prefab、必需组件与场景玩家引用；实例的 `Initialize` 检查注入目标，失败报错、不启动 FSM。Prefab 模板允许 target 为空。当前项目没有单独销毁玩家而保留敌人的路径，运行中目标失效防护暂不扩展。
 - **玩家死亡全部停机**：停止生成，现存敌人停止移动和攻击，取消未结算攻击；这不是敌人死亡，不进入 Dead，也不退回巡逻。
-- **生命与 FSM 分工**：`EnemyHealth` 保留血量、归零判断和最终销毁职责；拟在销毁前通知 `EnemyController`，由统一切换入口进入 Dead 并终止行为。具体通知接口尚未实现，不依赖对象销毁后下一帧再轮询死亡。
+- **生命与 FSM 分工**：`EnemyHealth` 保留血量、归零判断和最终销毁职责；归零时先调用 `EnemyController.ChangeState(EnemyState.Dead)`，再销毁对象，不依赖对象销毁后下一帧轮询死亡。
 - **停止行为必须真实生效**：当前 Spawner 只禁用 `EnemyController`；若未来存在独立组件、协程或延迟回调，必须确保这些攻击不会在停机后继续执行。
 
 ## 实现方案决定
@@ -62,10 +62,25 @@ Idle 采用无边界随机游走，每隔配置的 `IdleTime` 更换方向；这
 
 以上速度是本人运行后有意调整的玩法参数，不是旧 `moveSpeed` 的意外回归。
 
-## 验证结果
+## BLU-16 验证结果
 
 - 本人完成最终手动回归：Fast / Normal 的 12 / 18 伤害、无旧碰撞叠加、敌人死亡与波次继续、玩家死亡停机、R 重开、Console 无红色错误。
 - AI 静态复核三份配置与 Prefab 引用、脚本 GUID、状态转移、最新程序集时间和 Editor 日志；`git diff --check` 通过。
 - 攻击范围硬编码占位符曾导致配置范围与查询范围不一致，本人在验收中识别并改为读取配置。
 - 双阈值与 Dead 终态通过 Human-first 预测检查；LC-07 对 enum、引用、继承和组合通过，接口、抽象状态类与 concrete state 术语保持 PARTIAL。
 - 没有自动化测试或本日媒体证据；精确边界主要通过代码追踪和手工冒烟验证，不夸大为完整状态级测试。
+
+## BLU-17：状态日志与固定 Debug 面板
+
+在 Editor 打开 TestArena，进入 Play Mode，选中 DebugCanvas，将 Hierarchy 中动态生成的敌人拖入 EnemyDebugDisplay 的 Observed Enemy 字段。面板显示名称、运行时实例标识、CurrentState 及控制器 Running / Stopped。运行时绑定用于当前调试会话，重开后需要重新选择敌人。
+
+- EnemyDebugDisplay 挂在 DebugCanvas 上，Debug Panel 绑定其子对象 EnemyDebugPanel；Debug Text 绑定 EnemyDebugText。面板位于右上角，尺寸由本人调整为 240×120，文字使用四边内距布局。
+- Show Panel 默认开启，只控制面板；关闭后跳过文字刷新，显示脚本继续运行以便重新打开。界面采用 Update 读取只读状态，不向 FSM 写入状态，也没有事件订阅。
+- EnemyController 的 Debug Mode 默认开启，分别控制各敌人的初始化/成功切换日志。关闭某只敌人的开关不会关闭其他敌人或已有血量、错误及拒绝 Dead 后切换的警告输出，不删除已输出日志。
+- 日志格式为 `实例名称及标识 | 帧号 | 旧状态 -> 新状态`，附 Unity 对象上下文。初态单独输出 Starting in Idle/Chase；同状态请求不记录成功切换，Dead 后的切换请求被拒绝。
+- Attack 可能在两次显示刷新之间进入并退出；应结合日志判断，不通过延长状态或推迟 Destroy 制造显示效果。Dead 在 Health 销毁对象之前记录。
+- 未绑定对象时显示 Not selected；曾被正常观察的对象销毁后显示 Destroyed。Stopped 表示组件/对象未启用，不等于敌人进入 Dead，也不说明其他组件的全部行为。
+
+本人反馈正常显示、已观察对象销毁提示、面板隐藏/恢复、面板与日志开关独立工作通过，并接受最终布局。AI 检查场景引用及源码，Editor.log 可见 NormalEnemy(Clone)-11764 在帧 1938 的 Chase→Attack→Chase、帧 2026 的 Chase→Dead。没有新建自动化测试或独立截图/录像文件；双实例逐项切换及全部精确边界没有独立完整复验，不将上述反馈夸大为全覆盖。
+
+当前限制：lastObservedEnemy 只在面板显示且目标有效时更新。隐藏期间换绑后销毁新目标，或手动清空引用等组合，可能使销毁提示反映先前对象；应重新显示并绑定有效目标后观察。该显示提示限制不修改敌人行为，留作后续需要时的局部改进。

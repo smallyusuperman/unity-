@@ -181,6 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c45db11aa0988ee4fa9e48bbc4336b6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
+  debugMode: 1
   target: {fileID: 0}
   enemyData: {fileID: 11400000, guid: b20f43560fa44584ab77b462620d61a9, type: 2}
 --- !u!114 &3222248700842246322
