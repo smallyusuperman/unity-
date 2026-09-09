@@ -6,6 +6,7 @@
 
 - [Enemy FSM Design](enemy-fsm-design.md)：状态与转移、方案选择和最小实现草稿；尚未实现或完成运行验证。
 - [Data-Driven Enemy Configuration](data-driven-enemy-configuration.md)：说明敌人配置、Prefab、逻辑组件与运行实例状态的边界，并记录 HeavyEnemy 的零 C# 扩展示例。
+- [Grid A* Pathfinding](grid-a-star-pathfinding.md)：记录有限网格、A* 输入输出契约、数据结构、复杂度、测试入口和后续场景适配边界。
 
 建议后续文件：
 

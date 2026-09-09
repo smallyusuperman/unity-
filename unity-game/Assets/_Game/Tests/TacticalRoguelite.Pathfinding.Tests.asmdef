@@ -1,0 +1,12 @@
+{
+    "name": "TacticalRoguelite.Pathfinding.Tests",
+    "references": [
+        "TacticalRoguelite.Pathfinding"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
+}
