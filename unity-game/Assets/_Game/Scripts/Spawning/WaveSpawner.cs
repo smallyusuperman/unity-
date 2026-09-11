@@ -14,6 +14,8 @@ public class WaveSpawner : MonoBehaviour
     [Min(0f)]
     [SerializeField] private float interWaveDelay = 2f;
 
+    [SerializeField] private ScenePathfindingGrid pathfindingGrid;
+
     private readonly Queue<Transform> pendingSpawnPoints = new();
     private readonly List<GameObject> activeEnemies = new();
 
@@ -126,6 +128,15 @@ public class WaveSpawner : MonoBehaviour
         {
             Debug.LogError(
                 "WaveSpawner requires a player target.",
+                this);
+
+            return false;
+        }
+
+        if (pathfindingGrid == null)
+        {
+            Debug.LogError(
+                "WaveSpawner requires a ScenePathfindingGrid.",
                 this);
 
             return false;
@@ -244,7 +255,7 @@ public class WaveSpawner : MonoBehaviour
         EnemyController enemyController =
             enemy.GetComponent<EnemyController>();
 
-        enemyController.Initialize(playerTarget.transform);
+        enemyController.Initialize(playerTarget.transform, pathfindingGrid);
         activeEnemies.Add(enemy);
     }
 

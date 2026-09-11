@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class EnemyController : MonoBehaviour
 {
@@ -26,12 +27,28 @@ public class EnemyController : MonoBehaviour
     private float maxIdleTime;
     private float attackCooldown;
 
+    [Min(0.1f)]
+    [SerializeField] private float repathInterval = 0.5f;
+
+    private float repathTimer;
+    private Vector2Int lastTargetCell;
+    private bool hasTargetCell;
+
     private float chaseToIdleDistance;
     private float idleToChaseDistance;
     private float attackRange;
 
     private float idleMovespeed;
     private float chaseMovespeed;
+
+    private class Waypoint
+    {
+        public List<Vector2> Path;
+        public int CurrentIndex;
+    }
+    private Waypoint waypoint;
+
+    private ScenePathfindingGrid pathfindingGrid;
 
     private void Awake()
     {   if (ValidateConfiguration()){
@@ -74,9 +91,42 @@ public class EnemyController : MonoBehaviour
                 Debug.Log($"{name}{GetInstanceID()} | {Time.frameCount} | Starting in Chase state.", this);
             currentState = EnemyState.Chase;
         }
+
+        waypoint = new Waypoint
+        {
+            Path = new List<Vector2>(),
+            CurrentIndex = 0
+        };
+        if (currentState == EnemyState.Chase)
+        {
+            RefreshPath();
+        }
     }
 
-    public void Initialize(Transform newTarget)
+    private void RefreshPath()
+    {
+        lastTargetCell = pathfindingGrid.WorldToCell(target.position);
+        hasTargetCell = true;
+
+        if (pathfindingGrid.TryGetWaypoints(
+                rb.position,
+                target.position,
+                out List<Vector2> newPath))
+        {
+            waypoint.Path = newPath;
+        }
+        else
+        {
+            waypoint.Path.Clear();
+        }
+
+        waypoint.CurrentIndex = 0;
+        repathTimer = repathInterval;
+    }
+
+    public void Initialize(
+    Transform newTarget,
+    ScenePathfindingGrid newPathfindingGrid)
     {
         if (newTarget == null)
         {
@@ -88,7 +138,18 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        if (newPathfindingGrid == null)
+        {
+            Debug.LogError(
+                "EnemyController cannot initialize without a ScenePathfindingGrid.",
+                this);
+
+            enabled = false;
+            return;
+        }
+
         target = newTarget;
+        pathfindingGrid = newPathfindingGrid;
         enabled = true;
     }
 
@@ -118,25 +179,80 @@ public class EnemyController : MonoBehaviour
                 }
                 break;
             case EnemyState.Chase:
-                // 处理追踪状态
-                direction = (target.position - transform.position).normalized;
-                newPosition = rb.position + direction * chaseMovespeed * Time.fixedDeltaTime;
-                rb.MovePosition(newPosition);
+                repathTimer -= Time.fixedDeltaTime;
+
+                bool hasUsablePath =
+                    waypoint != null
+                    && waypoint.Path != null
+                    && waypoint.Path.Count > 0
+                    && waypoint.CurrentIndex >= 0
+                    && waypoint.CurrentIndex < waypoint.Path.Count;
+
+                Vector2Int currentTargetCell =
+                    pathfindingGrid.WorldToCell(target.position);
+
+                bool targetCellChanged =
+                    !hasTargetCell || currentTargetCell != lastTargetCell;
+
+                bool retryMissingPath =
+                    !hasUsablePath && repathTimer <= 0f;
+
+                if (targetCellChanged || retryMissingPath)
+                {
+                    RefreshPath();
+
+                    hasUsablePath =
+                        waypoint.Path != null
+                        && waypoint.Path.Count > 0
+                        && waypoint.CurrentIndex >= 0
+                        && waypoint.CurrentIndex < waypoint.Path.Count;
+                }
+
+                if (hasUsablePath)
+                {
+                    Vector2 waypointPosition =
+                        waypoint.Path[waypoint.CurrentIndex];
+
+                    direction =
+                        (waypointPosition - rb.position).normalized;
+
+                    newPosition =
+                        rb.position
+                        + direction
+                        * chaseMovespeed
+                        * Time.fixedDeltaTime;
+
+                    rb.MovePosition(newPosition);
+
+                    if (Vector2.Distance(
+                            rb.position,
+                            waypointPosition) < 0.1f)
+                    {
+                        if (waypoint.CurrentIndex < waypoint.Path.Count - 1)
+                        {
+                            waypoint.CurrentIndex++;
+                        }
+                    }
+                }
 
                 cooldownTimer -= Time.fixedDeltaTime;
 
-                if ((target.position - transform.position).magnitude >= chaseToIdleDistance)
+                if ((target.position - transform.position).magnitude
+                    >= chaseToIdleDistance)
                 {
                     direction = Random.insideUnitCircle.normalized;
                     IdleTimer = 0f;
                     ChangeState(EnemyState.Idle);
                 }
 
-                if ((target.position - transform.position).magnitude < attackRange && cooldownTimer < 0f)
+                if ((target.position - transform.position).magnitude
+                    < attackRange
+                    && cooldownTimer < 0f)
                 {
                     ChangeState(EnemyState.Attack);
                 }
-                break;
+
+    break;
             case EnemyState.Attack:
                 // 处理攻击状态
                 break;
@@ -161,6 +277,11 @@ public class EnemyController : MonoBehaviour
 
         previousState = currentState;
         currentState = newState;
+
+        if (currentState == EnemyState.Chase)
+        {
+            RefreshPath();
+        }
         if (debugMode){
             Debug.Log($"{name}{GetInstanceID()} | {Time.frameCount} | {previousState} -> {currentState}.", this);}
     }
