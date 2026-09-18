@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour, IDamageable
 {
     public event EventHandler HealthChanged;
 

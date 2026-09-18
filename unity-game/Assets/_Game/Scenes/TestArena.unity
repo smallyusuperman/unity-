@@ -2006,6 +2006,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
   attackDamage: 30
   attackRange: 2
+  NormalAttack: {fileID: 11400000, guid: bfe427e8b6c40ef45aaf034a9fc97173, type: 2}
 --- !u!114 &1811532727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2279,4 +2280,3 @@ SceneRoots:
   - {fileID: 1191518017}
   - {fileID: 2100000004}
   - {fileID: 961950107}
-

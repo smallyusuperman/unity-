@@ -4,27 +4,46 @@ using UnityEngine.Serialization;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [FormerlySerializedAs("playerDamage")]
-    [Min(0f)]
-    [SerializeField] private float attackDamage = 10f;
+    [FormerlySerializedAs("NormalAttack")]
+    [SerializeField] private PlayerSkillConfig normalAttackConfig;
 
-    [FormerlySerializedAs("striking_distance")]
-    [Min(0f)]
-    [SerializeField] private float attackRange = 1f;
+    private float attackDamage;
+    private float attackRange;
+    private float attackInterval;
+    private float remainingCooldown;
 
     private void Awake()
     {
-        attackDamage = Mathf.Max(0f, attackDamage);
-        attackRange = Mathf.Max(0f, attackRange);
+        if (normalAttackConfig == null)
+        {
+            Debug.LogError("PlayerAttack requires a PlayerSkillConfig.", this);
+            enabled = false;
+            return;
+        }
+
+        attackDamage = Mathf.Max(0f, normalAttackConfig.AttackDamage);
+        attackRange = Mathf.Max(0f, normalAttackConfig.AttackRange);
+        attackInterval = Mathf.Max(0.01f, normalAttackConfig.AttackInterval);
+    }
+
+    private void Start()
+    {
+        remainingCooldown = attackInterval;
     }
 
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
+        if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame && remainingCooldown <= 0f)
         {
             Attack();
+            remainingCooldown = attackInterval;
         }
+    }
+
+    private void FixedUpdate()
+    {
+        remainingCooldown -= Time.fixedDeltaTime;
     }
 
     // 当前 Enemy prefab 只有一个 Collider；若未来添加多个 Collider，需要按 EnemyHealth 去重。
