@@ -129,7 +129,6 @@ public class Pathfinding
 
             if (IsGoal(currentNode))
             {
-                Debug.Log("Destination reached!");
                 path = ReconstructPath(currentNode);
                 return true;
             }

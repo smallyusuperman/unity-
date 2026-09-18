@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviour
 {
@@ -41,14 +43,17 @@ public class EnemyController : MonoBehaviour
     private float idleMovespeed;
     private float chaseMovespeed;
 
-    private class Waypoint
+    public class Waypoint
     {
         public List<Vector2> Path;
         public int CurrentIndex;
     }
     private Waypoint waypoint;
+    public Waypoint WaypointReadOnly => waypoint;
 
     private ScenePathfindingGrid pathfindingGrid;
+
+    public event EventHandler<Waypoint> PathChanged;
 
     private void Awake()
     {   if (ValidateConfiguration()){
@@ -122,6 +127,8 @@ public class EnemyController : MonoBehaviour
 
         waypoint.CurrentIndex = 0;
         repathTimer = repathInterval;
+
+        NotifyPathChanged();
     }
 
     public void Initialize(
@@ -231,6 +238,7 @@ public class EnemyController : MonoBehaviour
                         if (waypoint.CurrentIndex < waypoint.Path.Count - 1)
                         {
                             waypoint.CurrentIndex++;
+                            NotifyPathChanged();
                         }
                     }
                 }
@@ -282,8 +290,17 @@ public class EnemyController : MonoBehaviour
         {
             RefreshPath();
         }
+        else
+        {
+            NotifyPathChanged();
+        }
         if (debugMode){
             Debug.Log($"{name}{GetInstanceID()} | {Time.frameCount} | {previousState} -> {currentState}.", this);}
+    }
+
+    private void NotifyPathChanged()
+    {
+        PathChanged?.Invoke(this, WaypointReadOnly);
     }
 
     public void ResetCooldown()
