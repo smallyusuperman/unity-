@@ -40,6 +40,8 @@ public class ScenePathfindingGrid : MonoBehaviour
             gridStructure.Obstacles);
     }
 
+    // 网格范围、原点、格子尺寸与障碍格目前全部写死。这是有意的阶段性取舍：
+    // 动态障碍与 Tilemap 数据源留待出现真实需求后再接入，不要当成遗漏。
     private GridStructure InitializeGrid()
     {
         return new GridStructure
@@ -62,6 +64,10 @@ public class ScenePathfindingGrid : MonoBehaviour
         };
     }
 
+    /// <summary>
+    /// 世界坐标转格子坐标。CellSize 为 1 时使用 RoundToInt，
+    /// 因此格子中心落在整数坐标、格边界位于 0.5 处；敌人的"换格"判定依赖这一约定。
+    /// </summary>
     public Vector2Int WorldToCell(Vector2 worldPosition)
     {
         EnsureInitialized();
@@ -73,6 +79,7 @@ public class ScenePathfindingGrid : MonoBehaviour
             Mathf.RoundToInt(localPosition.y / gridStructure.CellSize));
     }
 
+    /// <summary>格子坐标转回世界坐标，返回格子中心。</summary>
     public Vector2 CellToWorld(Vector2Int cellPosition)
     {
         EnsureInitialized();
@@ -91,6 +98,11 @@ public class ScenePathfindingGrid : MonoBehaviour
             && cellPosition.y <= gridStructure.HeightMax;
     }
 
+    /// <summary>
+    /// 求一条从 currentWorldPosition 到 targetWorldPosition 的世界坐标路径。
+    /// 起点或终点落在网格外时记录错误并返回 false；A* 判定不可达时同样返回 false。
+    /// 两种失败都不抛异常，调用方必须检查返回值。
+    /// </summary>
     public bool TryGetWaypoints(
         Vector2 currentWorldPosition,
         Vector2 targetWorldPosition,

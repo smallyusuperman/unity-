@@ -31,10 +31,13 @@ public class WaveSpawner : MonoBehaviour
     private bool waitingForNextWave;
     private bool runCompleted;
 
+    /// <summary>当前波次序号，从 1 开始。</summary>
     public int CurrentWaveNumber => currentWaveIndex + 1;
 
+    /// <summary>本波剩余待生成的敌人数量。</summary>
     public int PendingEnemyCount => pendingSpawnPoints.Count;
 
+    /// <summary>当前记为存活的敌人数量；已销毁的对象会在下一次 Update 中被剔除。</summary>
     public int ActiveEnemyCount => activeEnemies.Count;
 
     private void Awake()
@@ -105,23 +108,26 @@ public class WaveSpawner : MonoBehaviour
 
         for (int i = 0; i < waveConfigs.Length; i++)
         {
-            if (waveConfigs[i].enemyPrefab == null){
-            Debug.LogError(
-                "WaveSpawner requires an enemy prefab.",
-                this);
+            if (waveConfigs[i].enemyPrefab == null)
+            {
+                Debug.LogError(
+                    "WaveSpawner requires an enemy prefab.",
+                    this);
 
-            return false;
+                return false;
             }
         }
-        for (int i = 0; i < waveConfigs.Length; i++){
-        if (waveConfigs[i].enemyPrefab.GetComponent<EnemyController>() == null)
-        {
-            Debug.LogError(
-                "WaveSpawner enemy prefab requires an EnemyController component.",
-                this);
 
-            return false;
-        }
+        for (int i = 0; i < waveConfigs.Length; i++)
+        {
+            if (waveConfigs[i].enemyPrefab.GetComponent<EnemyController>() == null)
+            {
+                Debug.LogError(
+                    "WaveSpawner enemy prefab requires an EnemyController component.",
+                    this);
+
+                return false;
+            }
         }
 
         if (playerTarget == null)
@@ -185,13 +191,14 @@ public class WaveSpawner : MonoBehaviour
                 return false;
             }
         }
-        for (int i = 0; i < waveConfigs.Length; i++){
-        if (waveConfigs[i].spawnInterval < 0f)
+        for (int i = 0; i < waveConfigs.Length; i++)
         {
-            Debug.LogWarning(
-                "WaveSpawner spawn interval was negative and will be clamped to zero.",
-                this);
-        }
+            if (waveConfigs[i].spawnInterval < 0f)
+            {
+                Debug.LogWarning(
+                    "WaveSpawner spawn interval was negative and will be clamped to zero.",
+                    this);
+            }
         }
 
         if (interWaveDelay < 0f)
@@ -259,6 +266,9 @@ public class WaveSpawner : MonoBehaviour
         activeEnemies.Add(enemy);
     }
 
+    // activeEnemies 保存的是 GameObject 引用。敌人死亡时 EnemyHealth 会 Destroy 自身，
+    // 此时 Unity 重载的 == 使该引用与 null 相等，因此这里能识别出已销毁的敌人。
+    // 倒序遍历是为了在 RemoveAt 之后不跳过后续元素。
     private void RemoveDestroyedEnemies()
     {
         for (int i = activeEnemies.Count - 1; i >= 0; i--)

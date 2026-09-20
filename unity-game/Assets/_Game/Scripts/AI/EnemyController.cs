@@ -10,21 +10,22 @@ public class EnemyController : MonoBehaviour
     // 场景实例可由 Inspector 配置目标；动态实例由 WaveSpawner 调用 Initialize 注入目标。
     [SerializeField] private Transform target;
 
-    //[Min(0f)][SerializeField] private float moveSpeed = 2f;
-
     [SerializeField] private EnemyStatsConfig enemyData;
 
     private Rigidbody2D rb;
 
     private EnemyState previousState;
+    /// <summary>上一次 ChangeState 之前的状态，供调试显示与转移日志使用。</summary>
     public EnemyState PreviousState => previousState;
     private EnemyState currentState;
+    /// <summary>当前状态；只允许由 ChangeState 修改。</summary>
     public EnemyState CurrentState => currentState;
 
     private Vector2 direction;
     private Vector2 newPosition;
 
     private float IdleTimer = 0f;
+    // 攻击冷却：只在 Idle 与 Chase 分支递减；Attack 结算后由 ResetCooldown 重新装填。
     private float cooldownTimer;
     private float maxIdleTime;
     private float attackCooldown;
@@ -43,6 +44,7 @@ public class EnemyController : MonoBehaviour
     private float idleMovespeed;
     private float chaseMovespeed;
 
+    /// <summary>一条 A* 路径及当前消费到的索引；通过 PathChanged 事件按引用传出。</summary>
     public class Waypoint
     {
         public List<Vector2> Path;
@@ -56,12 +58,10 @@ public class EnemyController : MonoBehaviour
     public event EventHandler<Waypoint> PathChanged;
 
     private void Awake()
-    {   if (ValidateConfiguration()){
+    {
+        if (ValidateConfiguration())
+        {
             rb = GetComponent<Rigidbody2D>();
-            // if(enemyData != null)
-            // {
-            // moveSpeed = Mathf.Max(0f, enemyData.moveSpeed);
-            // }
 
             chaseToIdleDistance = enemyData.ChaseToIdleDistance;
             idleToChaseDistance = enemyData.IdleToChaseDistance;
@@ -72,7 +72,6 @@ public class EnemyController : MonoBehaviour
 
             maxIdleTime = enemyData.IdleTime;
             attackCooldown = enemyData.AttackCooldown;
-
         }
         else
         {
@@ -131,9 +130,14 @@ public class EnemyController : MonoBehaviour
         NotifyPathChanged();
     }
 
+    /// <summary>
+    /// 由 WaveSpawner 在 Instantiate 之后立即调用，注入两个运行期依赖。
+    /// 必须在 Start 之前完成：Start 会读取 target 位置、必要时调用 RefreshPath，
+    /// 而 pathfindingGrid 是纯私有字段，无法通过 Inspector 赋值。
+    /// </summary>
     public void Initialize(
-    Transform newTarget,
-    ScenePathfindingGrid newPathfindingGrid)
+        Transform newTarget,
+        ScenePathfindingGrid newPathfindingGrid)
     {
         if (newTarget == null)
         {
@@ -162,10 +166,6 @@ public class EnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // 归一化方向，确保追踪速度不随目标距离或斜向分量变化。
-        //Vector2 direction = (target.position - transform.position).normalized;
-        //Vector2 newPosition = rb.position + direction * moveSpeed * Time.fixedDeltaTime;
-        //rb.MovePosition(newPosition);
         switch (currentState)
         {
             case EnemyState.Idle:
@@ -260,16 +260,20 @@ public class EnemyController : MonoBehaviour
                     ChangeState(EnemyState.Attack);
                 }
 
-    break;
+                break;
             case EnemyState.Attack:
-                // 处理攻击状态
                 break;
             case EnemyState.Dead:
-                // 处理死亡状态
                 break;
         }
     }
 
+    /// <summary>
+    /// 切换敌人状态，三条不变量：
+    /// 1. 目标状态与当前状态相同则直接返回；
+    /// 2. Dead 是终态，从 Dead 出发的切换会被拒绝并记录警告；
+    /// 3. 进入 Chase 会自动重算路径，其它状态只发布一次 PathChanged 通知。
+    /// </summary>
     public void ChangeState(EnemyState newState)
     {
         if (currentState == newState)
@@ -277,7 +281,7 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        if(currentState == EnemyState.Dead)
+        if (currentState == EnemyState.Dead)
         {
             Debug.LogWarning($"{name}{GetInstanceID()} | {Time.frameCount} | Attempted to change state from Dead. No state change will occur.", this);
             return;
@@ -294,8 +298,10 @@ public class EnemyController : MonoBehaviour
         {
             NotifyPathChanged();
         }
-        if (debugMode){
-            Debug.Log($"{name}{GetInstanceID()} | {Time.frameCount} | {previousState} -> {currentState}.", this);}
+        if (debugMode)
+        {
+            Debug.Log($"{name}{GetInstanceID()} | {Time.frameCount} | {previousState} -> {currentState}.", this);
+        }
     }
 
     private void NotifyPathChanged()
@@ -303,6 +309,7 @@ public class EnemyController : MonoBehaviour
         PathChanged?.Invoke(this, WaypointReadOnly);
     }
 
+    /// <summary>攻击结算完成后重新装填冷却；当前调用方为 EnemyAttack。</summary>
     public void ResetCooldown()
     {
         cooldownTimer = attackCooldown;

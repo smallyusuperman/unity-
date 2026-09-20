@@ -4,6 +4,7 @@ using UnityEngine.Serialization;
 
 public class PlayerAttack : MonoBehaviour
 {
+    // 该字段曾用名 NormalAttack；保留此属性后，旧 Prefab / Scene 上已保存的引用不会断链。
     [FormerlySerializedAs("NormalAttack")]
     [SerializeField] private PlayerSkillConfig normalAttackConfig;
 
@@ -23,11 +24,13 @@ public class PlayerAttack : MonoBehaviour
 
         attackDamage = Mathf.Max(0f, normalAttackConfig.AttackDamage);
         attackRange = Mathf.Max(0f, normalAttackConfig.AttackRange);
+        // 间隔下限取 0.01 秒：配置为 0 会让每次 Update 都立即命中，等于没有冷却。
         attackInterval = Mathf.Max(0.01f, normalAttackConfig.AttackInterval);
     }
 
     private void Start()
     {
+        // 开局即进入一轮冷却，使第一次攻击也要等满一个间隔。
         remainingCooldown = attackInterval;
     }
 
@@ -43,6 +46,8 @@ public class PlayerAttack : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // 冷却在固定步长中推进；输入判定留在 Update，因为 wasPressedThisFrame 按渲染帧计数，
+        // 放进 FixedUpdate 会丢按键。
         remainingCooldown -= Time.fixedDeltaTime;
     }
 

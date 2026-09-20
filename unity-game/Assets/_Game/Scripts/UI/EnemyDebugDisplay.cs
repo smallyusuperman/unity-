@@ -46,15 +46,18 @@ public class EnemyDebugDisplay : MonoBehaviour
 
         if (observedEnemy == null)
         {
-        bool previousEnemyDestroyed =
-            !object.ReferenceEquals(lastObservedEnemy, null)
-            && lastObservedEnemy == null;
+            // 区分"未选中过"与"选过但已被销毁"：Unity 重载的 == 对已销毁对象返回 true
+            //（native 对象已不存在，只剩 managed wrapper），而 ReferenceEquals 只看 C# 引用本身。
+            // 两者同时成立，说明引用非空但对象已销毁。
+            bool previousEnemyDestroyed =
+                !object.ReferenceEquals(lastObservedEnemy, null)
+                && lastObservedEnemy == null;
 
-        debugText.text = previousEnemyDestroyed
-            ? "Enemy: Destroyed"
-            : "Enemy: Not selected";
+            debugText.text = previousEnemyDestroyed
+                ? "Enemy: Destroyed"
+                : "Enemy: Not selected";
 
-        return;
+            return;
         }
 
         lastObservedEnemy = observedEnemy;

@@ -1,6 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 有限网格上的 A* 寻路核心（纯 C#，不依赖场景对象，可在 EditMode 测试中直接构造）。
+/// 四方向移动、单位代价，启发函数为 Manhattan 距离——对四方向网格不会高估，可保证最短路径。
+/// open 集合用 List 线性取最小 f，单次寻路最坏约 O(V²)；当前网格规模下优先可读与可测。
+/// </summary>
 public class Pathfinding
 {
     private readonly int widthMin;
@@ -9,11 +14,14 @@ public class Pathfinding
     private readonly int heightMax;
     private readonly Vector2Int[] obstaclePositions;
 
+    // 以下私有搜索状态在 TryFindPath 调用期间充当"方法参数"，由各 helper 方法共享。
+    // 因此同一个实例不可并发或递归调用；一个网格对应一个实例。
     private Vector2Int goalPosition;
     private Vector2Int startPosition;
     private List<Node> openList;
     private List<Node> closedList;
 
+    /// <summary>A* 搜索节点：位置、父节点与 g/h 代价，f = g + h。</summary>
     public class Node
     {
         public Vector2Int Position;
@@ -23,6 +31,7 @@ public class Pathfinding
         public int HCost;
         public int FCost => GCost + HCost;
 
+        /// <summary>按 Manhattan 距离估算到终点的剩余代价；四方向单位代价下不会高估。</summary>
         public void CalculateHCost(Vector2Int goal)
         {
             HCost =
@@ -103,7 +112,8 @@ public class Pathfinding
     }
 
     /// <summary>
-    /// Finds a shortest path that includes both endpoints. Returns false with a null path when no valid path exists.
+    /// 求一条同时包含起点与终点的最短路径。
+    /// 网格配置非法（越界、起点或终点落在障碍上）或路径不可达时，返回 false 并把 path 置为 null。
     /// </summary>
     public bool TryFindPath(
         Vector2Int startPosition,

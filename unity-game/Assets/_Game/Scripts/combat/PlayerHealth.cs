@@ -3,6 +3,10 @@ using System;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
+    /// <summary>
+    /// 血量变化通知。事件不携带数据，订阅方自行读取 CurrentHealth / MaxHealth。
+    /// 注意 Awake 初始化后也会发布一次，订阅方需容忍"早于自身 Start"的通知。
+    /// </summary>
     public event EventHandler HealthChanged;
 
     // maxHealth 是可配置上限；currentHealth 是每次运行时独立变化的状态。
@@ -26,6 +30,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         HealthChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// <summary>
+    /// 唯一受伤入口（IDamageable 实现）。已经死亡时直接返回，不做任何结算。
+    /// 负伤害归零，结果钳制在 [0, maxHealth]；只有伤害大于 0 才发布 HealthChanged。
+    /// 血量归零时停用移动、近战与投射物组件，等待 R 键重载场景恢复。
+    /// </summary>
     public void TakeDamage(float damage)
     {
         if (currentHealth <= 0f)
@@ -41,7 +50,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         if (damage > 0f)
         {
-            // 触发生命值变化事件
             HealthChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -56,10 +64,12 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             {
                 playerController.enabled = false;
             }
-            if (playerAttack != null){
+            if (playerAttack != null)
+            {
                 playerAttack.enabled = false;
             }
-            if (playerShoot != null){
+            if (playerShoot != null)
+            {
                 playerShoot.enabled = false;
             }
         }

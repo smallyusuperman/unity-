@@ -30,14 +30,14 @@ public class EnemyAttack : MonoBehaviour
             Debug.LogWarning(
                 "EnemyAttack: No EnemyStatsConfig assigned or AttackDamage is not legal. Using default damage value of 5.",
                 this);
-            damage = 5f; // 默认伤害值
+            damage = 5f;
         }
     }
 
     private void FixedUpdate()
     {
         currentState = enemyController.CurrentState;
-        switch(currentState)
+        switch (currentState)
         {
             case EnemyState.Idle:
                 break;
@@ -47,8 +47,8 @@ public class EnemyAttack : MonoBehaviour
                 Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, enemyStatsConfig.AttackRange);
                 for (int i = 0; i < hitColliders.Length; i++)
                 {
-                PlayerHealth playerHealth = hitColliders[i].GetComponent<PlayerHealth>();
-                if (playerHealth != null)
+                    PlayerHealth playerHealth = hitColliders[i].GetComponent<PlayerHealth>();
+                    if (playerHealth != null)
                     {
                         playerHealth.TakeDamage(damage);
                     }

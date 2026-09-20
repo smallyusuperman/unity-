@@ -80,6 +80,7 @@ public class PlayerShoot : MonoBehaviour
         GameObject nearestEnemy = FindNearestEnemyInRange();
         if (nearestEnemy == null)
         {
+            // 范围内没有存活敌人时不消耗冷却：空放不施加惩罚，按键可立即重试。
             return;
         }
         direction = (nearestEnemy.transform.position - transform.position).normalized;
@@ -89,6 +90,9 @@ public class PlayerShoot : MonoBehaviour
 
     }
 
+    // 在 attackRange 内挑选最近的"存活"敌人（CurrentHealth > 0，排除已死但尚未销毁的敌人）。
+    // 距离相等时使用 <= 比较，因此会取后遇到的那一个；每次 Vector3.Distance 都会开平方，整体为 O(n) 扫描。
+    // 注意 attackRange 是索敌半径，投射物实际飞行距离由 maxDistance 控制。
     private GameObject FindNearestEnemyInRange()
     {
         GameObject nearestEnemyInRange = null;

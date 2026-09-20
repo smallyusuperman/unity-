@@ -51,6 +51,8 @@ public class ScenePathfindingGridTests
     [Test]
     public void TryGetWaypoints_AroundConfiguredObstacle_ReturnsWalkableWorldPath()
     {
+        // 必须与 ScenePathfindingGrid.InitializeGrid 中写死的障碍格保持一致。
+        // 生产网格的障碍若发生变化而此处未同步，本用例会绕开新障碍，从而静默失去验证意义。
         Vector2Int[] obstacles =
         {
             new Vector2Int(3, 1),
