@@ -24,22 +24,23 @@ tactical-roguelite/
 ## Current Status
 
 - Unity project: Unity 6000.3.22f1 project present under `unity-game/`
-- Player movement: BLU-01 engineering complete in `TestArena`; runtime checklist and screenshot recorded
-- C++ systems lab: scaffold only
-- GitHub remote: `origin` configured and `main` synchronized through `1e4545c`
-- Current baseline target: BLU-02；BLU-01 remains completed history
-- Detected Unity editor: `D:\Unity\Editors\6000.3.22f1`
-- Latest feature commit: `1e4545c feat: add basic player movement`
+- `TestArena`：玩家移动、近战、自动索敌投射物、血量显示、死亡停机及 R 重开。
+- 敌人：三种配置、Idle / Chase / Attack / Dead 状态机、网格 A* 绕障与路径线显示；波次生成与清波推进。
+- C++ systems lab：[独立 C++17 A*](cpp-systems-lab/astar/README.md) 已实现，历史测试 7/7、CTest 1/1 通过；本次未重跑。
+- 最新进度：投射物主流程由作者完成运行验证；最终 C# 编译 0 warning / 0 error。改名后的 Unity Play Mode 未独立复验，高速薄墙专项尚无逐项证据。
+- 当前交付为编辑器原型，尚未提供可执行游戏版本。角色和环境 AI 素材已导入但尚未替换场景，投射物素材已接入。
+- [投射物实现与验证范围](docs/player-projectile.md) · [工程文档](docs/README.md) · [AI 素材来源](media/source/day25-art-notes.md)
 
 ## Unity Project Setup
 
-用 Unity Hub 创建项目时：
+克隆仓库后，用 Unity Hub 打开已有项目：
 
-1. 选择 Unity 6.x。
-2. 选择 2D 模板。
-3. Project name 使用 `unity-game`。
-4. Location 选择本仓库根目录：`D:\学习计划\engineering\tactical-roguelite`。
-5. 创建后应出现：
+1. 安装 Unity 6000.3.22f1。
+2. 在 Unity Hub 选择添加磁盘中的项目，定位本仓库的 `unity-game/`，无需重新创建项目。
+3. 等待依赖解析和资源导入，打开 `Assets/_Game/Scenes/TestArena.unity`，点击 Play。
+4. WASD 移动，Space 近战，Q 向最近敌人发射，死亡后 R 重开。
+
+项目目录包含：
 
 ```text
 unity-game/
@@ -77,3 +78,5 @@ PlayerController：玩家可以控制主对象移动，速度可调
 PlayerRestartController：玩家血量为0后按R重启游戏
 WaveSpawner：比较复杂，我已经自己写过完整需求了。大体上就是控制波次生成
 PlayerHealthDisplay：ui设置
+PlayerShoot：读取 Q 输入、维护独立冷却、选择最近存活敌人并生成投射物
+ArrowAction：初始化方向和参数、直线飞行、触发命中及距离结束

@@ -1812,6 +1812,7 @@ GameObject:
   - component: {fileID: 1811532725}
   - component: {fileID: 1811532726}
   - component: {fileID: 1811532727}
+  - component: {fileID: 1811532728}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2004,9 +2005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8a5f70267cefbb40a0d26515e35d19e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
-  attackDamage: 30
-  attackRange: 2
-  NormalAttack: {fileID: 11400000, guid: bfe427e8b6c40ef45aaf034a9fc97173, type: 2}
+  normalAttackConfig: {fileID: 11400000, guid: bfe427e8b6c40ef45aaf034a9fc97173, type: 2}
 --- !u!114 &1811532727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2019,6 +2018,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f87e26d47819c845b5a619749bb68fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRestartController
+--- !u!114 &1811532728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1811532719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c82b6c4ffb59b644cab741b33308bc00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::playerShoot
+  maxDistance: 20
+  boltSpeed: 10
+  BoltConfig: {fileID: 11400000, guid: b9e0da24246c357498fd2bb28c8668f1, type: 2}
+  BoltPrefab: {fileID: 603064105781834686, guid: 6c1b739e50c09b8428f8c389f2ed8295, type: 3}
 --- !u!1 &2100000001
 GameObject:
   m_ObjectHideFlags: 0

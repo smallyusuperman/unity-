@@ -51,12 +51,16 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             // 死亡后停止玩家主动控制；场景重载会恢复初始状态。
             PlayerController playerController = GetComponent<PlayerController>();
             PlayerAttack playerAttack = GetComponent<PlayerAttack>();
+            PlayerShoot playerShoot = GetComponent<PlayerShoot>();
             if (playerController != null)
             {
                 playerController.enabled = false;
             }
             if (playerAttack != null){
                 playerAttack.enabled = false;
+            }
+            if (playerShoot != null){
+                playerShoot.enabled = false;
             }
         }
     }
