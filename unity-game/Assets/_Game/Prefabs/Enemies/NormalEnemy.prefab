@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -3033131704882243239}
   - component: {fileID: -3222077351736710810}
   - component: {fileID: -5226456779879067597}
+  - component: {fileID: 1512853668966981131}
   m_Layer: 0
   m_Name: NormalEnemy
   m_TagString: Untagged
@@ -336,3 +337,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19bba92cab453a47885029fe0e81ba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestWaypointsSet
+--- !u!114 &1512853668966981131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977791363371296103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 282af7796a555f94b8172ef261ba8b4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlowEffect

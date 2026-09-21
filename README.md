@@ -23,6 +23,8 @@ tactical-roguelite/
 
 ## Current Status
 
+- E 范围减速已接入，支持重复刷新和到期恢复；[规则与验证范围](docs/area-slow.md)。当前伤害 1000 为临时清怪测试设置，作者已用其他数值自测，AI 补丁后的 Play Mode 尚未独立复验。
+
 - Unity project: Unity 6000.3.22f1 project present under `unity-game/`
 - `TestArena`：玩家移动、近战、自动索敌投射物、血量显示、死亡停机及 R 重开。
 - 敌人：三种配置、Idle / Chase / Attack / Dead 状态机、网格 A* 绕障与路径线显示；波次生成与清波推进。
@@ -38,7 +40,7 @@ tactical-roguelite/
 1. 安装 Unity 6000.3.22f1。
 2. 在 Unity Hub 选择添加磁盘中的项目，定位本仓库的 `unity-game/`，无需重新创建项目。
 3. 等待依赖解析和资源导入，打开 `Assets/_Game/Scenes/TestArena.unity`，点击 Play。
-4. WASD 移动，Space 近战，Q 向最近敌人发射，死亡后 R 重开。
+4. WASD 移动，Space 近战，Q 向最近敌人发射，E 范围减速（当前附带测试伤害），死亡后 R 重开。
 
 项目目录包含：
 

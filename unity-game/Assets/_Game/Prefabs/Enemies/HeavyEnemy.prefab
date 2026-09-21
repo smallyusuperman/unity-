@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -3033131704882243239}
   - component: {fileID: 5834822698610849926}
   - component: {fileID: -9162986233238127971}
+  - component: {fileID: 1704383357263599545}
   m_Layer: 0
   m_Name: HeavyEnemy
   m_TagString: Untagged
@@ -336,3 +337,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b19bba92cab453a47885029fe0e81ba6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestWaypointsSet
+--- !u!114 &1704383357263599545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8977791363371296103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 282af7796a555f94b8172ef261ba8b4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlowEffect

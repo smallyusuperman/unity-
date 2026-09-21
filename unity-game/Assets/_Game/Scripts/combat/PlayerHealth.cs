@@ -60,6 +60,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             PlayerController playerController = GetComponent<PlayerController>();
             PlayerAttack playerAttack = GetComponent<PlayerAttack>();
             PlayerShoot playerShoot = GetComponent<PlayerShoot>();
+            SlowSkill slowSkill = GetComponent<SlowSkill>();
+            if (slowSkill != null)
+            {                
+                slowSkill.enabled = false;
+            }
             if (playerController != null)
             {
                 playerController.enabled = false;

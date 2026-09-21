@@ -57,11 +57,14 @@ public class EnemyController : MonoBehaviour
 
     public event EventHandler<Waypoint> PathChanged;
 
+    private SlowEffect slowEffect;
+
     private void Awake()
     {
         if (ValidateConfiguration())
         {
             rb = GetComponent<Rigidbody2D>();
+            slowEffect = GetComponent<SlowEffect>();
 
             chaseToIdleDistance = enemyData.ChaseToIdleDistance;
             idleToChaseDistance = enemyData.IdleToChaseDistance;
@@ -175,7 +178,7 @@ public class EnemyController : MonoBehaviour
                     direction = Random.insideUnitCircle.normalized;
                 }
                 IdleTimer += Time.fixedDeltaTime;
-                newPosition = rb.position + direction * idleMovespeed * Time.fixedDeltaTime;
+                newPosition = rb.position + direction * idleMovespeed * Time.fixedDeltaTime * slowEffect.SpeedMultiper;
                 rb.MovePosition(newPosition);
 
                 cooldownTimer -= Time.fixedDeltaTime;
@@ -227,7 +230,7 @@ public class EnemyController : MonoBehaviour
                         rb.position
                         + direction
                         * chaseMovespeed
-                        * Time.fixedDeltaTime;
+                        * Time.fixedDeltaTime * slowEffect.SpeedMultiper;
 
                     rb.MovePosition(newPosition);
 

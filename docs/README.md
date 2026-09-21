@@ -4,6 +4,8 @@
 
 ## Current Documents
 
+- [范围减速](area-slow.md)：刷新规则、生命周期、测试参数和验证边界。
+
 - [Enemy FSM Design](enemy-fsm-design.md)：状态与转移及方案选择；Idle / Chase / Attack / Dead 已接入工程。
 - [Player Projectile](player-projectile.md)：最近存活目标查询、直线飞行、命中规则、配置与验证范围。
 - [Combat Architecture](combat-architecture-options.md)：战斗组件职责与接口取舍。
