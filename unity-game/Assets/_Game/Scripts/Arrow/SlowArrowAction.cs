@@ -1,12 +1,14 @@
 using UnityEngine;
 
-public class ArrowAction : MonoBehaviour
+public class SlowArrowAction : MonoBehaviour
 {
     private float speed;
     private float damage;
     private float maxDistance;
     private Vector3 direction;
     private Vector3 startPosition;
+    private float speedMultiper;
+    private float slowDuration;
 
     /// <summary>
     /// 由发射方在 Instantiate 之后立即调用，注入本次飞行的参数。
@@ -16,14 +18,16 @@ public class ArrowAction : MonoBehaviour
     /// <param name="speed">飞行速度，必须大于 0。</param>
     /// <param name="damage">命中伤害，必须大于 0。</param>
     /// <param name="maxDistance">最大飞行距离，必须大于 0；超出后自动销毁。</param>
-    public void Initialize(Vector3 direction, float speed, float damage, float maxDistance)
+    public void Initialize(Vector3 direction, float speed, float damage, float maxDistance, float speedMultiper, float slowDuration)
     {
-        if (direction != Vector3.zero && direction.z == 0f && speed > 0f && damage > 0f && maxDistance > 0f)
+        if (direction != Vector3.zero && direction.z == 0f && speed > 0f && damage > 0f && maxDistance > 0f && speedMultiper > 0f && speedMultiper <= 1f && slowDuration > 0f)
         {
             this.direction = direction.normalized;
             this.speed = speed;
             this.damage = damage;
             this.maxDistance = maxDistance;
+            this.speedMultiper = speedMultiper;
+            this.slowDuration = slowDuration;
             startPosition = transform.position;
             // 用 transform.right 对齐朝向。2D 下 direction 的 z 分量会让精灵绕 z 轴偏转，
             // 这正是上面要求 direction.z == 0 的原因。
@@ -50,10 +54,15 @@ public class ArrowAction : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         EnemyHealth enemyHealth = other.GetComponent<EnemyHealth>();
-        if (enemyHealth != null)
+        SlowEffect slowEffect = other.GetComponent<SlowEffect>();
+        if (enemyHealth != null && slowEffect != null)
         {
             // 允许同一物理步内收到的多个敌人接触回调分别结算伤害。
             enemyHealth.TakeDamage(damage);
+            if (enemyHealth.CurrentHealth > 0f)
+            {
+                slowEffect.SetSlowEffect(speedMultiper, slowDuration);
+            }
             Destroy(gameObject);
         }
         else if (other.GetComponent<PlayerHealth>() == null && other.GetComponent<ArrowAction>() == null && other.GetComponent<SlowArrowAction>() == null)

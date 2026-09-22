@@ -1814,6 +1814,7 @@ GameObject:
   - component: {fileID: 1811532727}
   - component: {fileID: 1811532728}
   - component: {fileID: 1811532729}
+  - component: {fileID: 1811532730}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2050,6 +2051,24 @@ MonoBehaviour:
   SlowSkillConfig: {fileID: 11400000, guid: 4de3fa5dce04ad74fb3d0a6d28c5c6b4, type: 2}
   slowDuration: 15
   speedMultiper: 0.2
+--- !u!114 &1811532730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1811532719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 876dc92de0295514196dcea4c66472e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSlowShoot
+  maxDistance: 20
+  boltSpeed: 10
+  speedMultiper: 0.2
+  slowDuration: 15
+  BoltConfig: {fileID: 11400000, guid: ffd0bc4e8b6da4e4bafe22a7e8f90479, type: 2}
+  SlowBoltPrefab: {fileID: 603064105781834686, guid: fb73743159cc1144f9114dcea171a4c7, type: 3}
 --- !u!1 &2100000001
 GameObject:
   m_ObjectHideFlags: 0
