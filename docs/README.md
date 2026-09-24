@@ -4,6 +4,7 @@
 
 ## Current Documents
 
+- [Combat 系统现状与取舍](combat-system.md)：四条技能调用链、状态归属、扩展成本及已认可但尚未实施的组件组合方案。
 - [范围减速](area-slow.md)：刷新规则、生命周期、测试参数和验证边界。
 
 - [Enemy FSM Design](enemy-fsm-design.md)：状态与转移及方案选择；Idle / Chase / Attack / Dead 已接入工程。
@@ -15,7 +16,6 @@
 建议后续文件：
 
 - `architecture.md`
-- `combat-system.md`
 - `enemy-ai-and-pathfinding.md`
 - `performance.md`
 - `testing.md`
